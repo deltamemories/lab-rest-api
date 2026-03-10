@@ -21,6 +21,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN addgroup --gid ${GROUP_ID} user && \
     adduser --disabled-password --gecos "" --uid ${USER_ID} --gid ${GROUP_ID} user
 
-USER user
 
-WORKDIR /var/www
+WORKDIR /var/www/symfony
+
+RUN chown -R user:user /var/www
+
+USER user
