@@ -33,10 +33,10 @@ services:
     container_name: symfony_db
     restart: always
     environment:
-      MYSQL_DATABASE: app_db
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_USER: user
-      MYSQL_PASSWORD: user_password
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
