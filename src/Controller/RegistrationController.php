@@ -28,6 +28,14 @@ final class RegistrationController extends AbstractController
             );
         }
 
+        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        if ($existingUser) {
+            return new JsonResponse(
+                ['error' => "User with this email already exists"],
+                Response::HTTP_CONFLICT
+            );
+        }
+
         $user = new User();
 
         $user->setEmail($data['email']);
