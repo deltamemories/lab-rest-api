@@ -33,9 +33,11 @@ class Post
     private PostStatus $status;
 
     #[ORM\Column]
+    #[Groups(['post:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['post:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
