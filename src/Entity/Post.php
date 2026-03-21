@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
+use App\Enum\PostStatus;
+
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -22,8 +25,8 @@ class Post
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    #[ORM\Column(type: 'string', enumType: PostStatus::class)]
+    private PostStatus $status;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -43,7 +46,11 @@ class Post
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
+        
         $this->comments = new ArrayCollection();
+
+        $this->status = PostStatus::DRAFT;
     }
 
     public function getId(): ?int
@@ -75,12 +82,12 @@ class Post
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): PostStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(PostStatus $status): static
     {
         $this->status = $status;
 
