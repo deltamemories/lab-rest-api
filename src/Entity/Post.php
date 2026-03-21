@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
+use App\Enum\PostStatus;
+
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -14,25 +17,32 @@ class Post
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['post:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['post:read'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['post:read'])]
     private ?string $content = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    #[ORM\Column(type: 'string', enumType: PostStatus::class)]
+    #[Groups(['post:read'])]
+    private PostStatus $status;
 
     #[ORM\Column]
+    #[Groups(['post:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['post:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['post:read'])]
     private ?User $author = null;
 
     /**
@@ -43,7 +53,11 @@ class Post
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
+        
         $this->comments = new ArrayCollection();
+
+        $this->status = PostStatus::DRAFT;
     }
 
     public function getId(): ?int
@@ -75,12 +89,12 @@ class Post
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): PostStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(PostStatus $status): static
     {
         $this->status = $status;
 
@@ -151,5 +165,10 @@ class Post
         }
 
         return $this;
+    }
+
+    #[ORM\PreUpdate]
+    public function updateTimestamp(): void {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }
