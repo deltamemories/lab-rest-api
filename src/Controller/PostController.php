@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Entity\User;
 use App\Entity\Post;
+use App\Repository\PostRepository;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
 #[Route('/api/posts')]
@@ -37,5 +38,17 @@ final class PostController extends AbstractController {
         $emi->flush();
 
         return $this->json(['id' => $post->getId()], Response::HTTP_CREATED);
+    }
+
+    #[Route('', name: 'api_posts_index', methods: ['GET'])]
+    public function index(
+        PostRepository $postRepo,
+        #[CurrentUser] User $user,
+    ): JsonResponse {
+        $posts = $postRepo->findBy(['author' => $user]);
+
+        return $this->json($posts, Response::HTTP_OK, [], [
+            'groups' => 'post:read'
+        ]);
     }
 }
