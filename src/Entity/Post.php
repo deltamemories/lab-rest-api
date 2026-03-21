@@ -164,4 +164,9 @@ class Post
 
         return $this;
     }
+
+    #[ORM\PreUpdate]
+    public function updateTimestamp(): void {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
 }
