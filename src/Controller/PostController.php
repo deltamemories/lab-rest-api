@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\CreatePostDto;
+use App\Dto\UpdatePostDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -67,5 +68,30 @@ final class PostController extends AbstractController {
         $emi->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/{id}', name: 'api_posts_update', methods: ['PUT', 'PATCH'])]
+    public function update(
+        Post $post,
+        #[MapRequestPayload] UpdatePostDto $postDto,
+        EntityManagerInterface $emi
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('POST_EDIT', $post);
+
+        if ($postDto->title !== null) {
+            $post->setTitle($postDto->title);
+        }
+
+        if ($postDto->content !== null) {
+            $post->setContent($postDto->content);
+        }
+
+        if ($postDto->status !== null) {
+            $post->setStatus($postDto->status);
+        }
+
+        $emi->flush();
+
+        return $this->json($post, context: ['groups' => 'post:read']);
     }
 }
