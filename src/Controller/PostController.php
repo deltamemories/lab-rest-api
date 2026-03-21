@@ -51,4 +51,11 @@ final class PostController extends AbstractController {
             'groups' => 'post:read'
         ]);
     }
+
+    #[Route('/{id}', name: 'api_posts_show', methods: ['GET'])]
+    public function show(Post $post): JsonResponse {
+        $this->denyAccessUnlessGranted('POST_VIEW', $post);
+
+        return $this->json($post, context: ['groups' => 'post:read']);
+    }
 }
