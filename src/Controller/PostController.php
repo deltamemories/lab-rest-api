@@ -58,4 +58,14 @@ final class PostController extends AbstractController {
 
         return $this->json($post, context: ['groups' => 'post:read']);
     }
+
+    #[Route('/{id}', name: 'api_posts_delete', methods: ['DELETE'])]
+    public function delete(Post $post, EntityManagerInterface $emi): JsonResponse {
+        $this->denyAccessUnlessGranted('POST_DELETE', $post);
+
+        $emi->remove($post);
+        $emi->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
 }
