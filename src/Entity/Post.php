@@ -17,32 +17,32 @@ class Post
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['post:read'])]
+    #[Groups(['post:read', 'comment:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['post:read'])]
+    #[Groups(['post:read', 'comment:read'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['post:read'])]
+    #[Groups(['post:read', 'comment:read'])]
     private ?string $content = null;
 
     #[ORM\Column(type: 'string', enumType: PostStatus::class)]
-    #[Groups(['post:read'])]
+    #[Groups(['post:read', 'comment:read'])]
     private PostStatus $status;
 
     #[ORM\Column]
-    #[Groups(['post:read'])]
+    #[Groups(['post:read', 'comment:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['post:read'])]
+    #[Groups(['post:read', 'comment:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['post:read'])]
+    #[Groups(['post:read', 'comment:read'])]
     private ?User $author = null;
 
     /**
