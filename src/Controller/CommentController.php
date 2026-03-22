@@ -53,4 +53,11 @@ final class CommentController extends AbstractController {
             'groups' => 'comment:read'
         ]);
     }
+
+    #[Route('/{id}', name: 'api_comments_show', methods: ['GET'])]
+    public function show(Comment $comment): JsonResponse {
+        $this->denyAccessUnlessGranted('COMMENT_VIEW', $comment);
+
+        return $this->json($comment, context: ['groups' => 'comment:read']);
+    }
 }
