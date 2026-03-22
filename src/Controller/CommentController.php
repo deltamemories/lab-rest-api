@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\CreateCommentDto;
+use App\Dto\UpdateCommentDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -69,5 +70,31 @@ final class CommentController extends AbstractController {
         $emi->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/{id}', name: 'api_comments_update', methods: ['PUT', 'PATCH'])]
+    public function update(
+        Comment $comment,
+        #[MapRequestPayload] UpdateCommentDto $commentDto,
+        EntityManagerInterface $emi,
+        PostRepository $postRepo
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted('COMMENT_EDIT', $comment);
+
+        if ($commentDto->content !== null) {
+            $comment->setContent($commentDto->content);
+        }
+
+        if ($commentDto->post !== null) {
+            $post = $postRepo->findOneBy(['id' => $commentDto->post]);
+            if ($post === null) {
+                return $this->json(['error' => "New Post with this id not found"], Response::HTTP_NOT_FOUND);
+            }
+            $comment->setPost($post);
+        }
+
+        $emi->flush();
+
+        return $this->json($comment, context: ['groups' => 'comment:read']);
     }
 }
