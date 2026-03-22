@@ -60,4 +60,14 @@ final class CommentController extends AbstractController {
 
         return $this->json($comment, context: ['groups' => 'comment:read']);
     }
+
+    #[Route('/{id}', name: 'api_comments_delete', methods: ['DELETE'])]
+    public function delete(Comment $comment, EntityManagerInterface $emi): JsonResponse {
+        $this->denyAccessUnlessGranted('COMMENT_DELETE', $comment);
+
+        $emi->remove($comment);
+        $emi->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
 }
