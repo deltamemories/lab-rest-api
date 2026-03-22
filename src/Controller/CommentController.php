@@ -12,6 +12,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Entity\User;
 use App\Entity\Comment;
 use App\Entity\Post;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,5 +40,17 @@ final class CommentController extends AbstractController {
         $emi->flush();
 
         return $this->json(['id' => $comment->getId()], Response::HTTP_CREATED);
+    }
+
+    #[Route('', name: 'api_comments_index', methods: ['GET'])]
+    public function index(
+        CommentRepository $commentRepo,
+        #[CurrentUser] User $user
+    ) {
+        $comments = $commentRepo->findBy(['author' => $user]);
+
+        return $this->json($comments, Response::HTTP_OK, [], [
+            'groups' => 'comment:read'
+        ]);
     }
 }
