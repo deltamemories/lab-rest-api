@@ -1,5 +1,15 @@
 snc_redis:
     clients:
+        default:
+            type: predis
+            alias: default
+            dsn: "%env(REDIS_URL)%"
+            options:
+                prefix: "blog_app:"
+    
+    # session:
+    #     client: default
+    #     prefix: "session:"
 
 # Define your clients here. The example below connects to database 0 of the default Redis server.
 #
