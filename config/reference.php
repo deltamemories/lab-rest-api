@@ -1296,6 +1296,57 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         cache?: scalar|Param|null, // Storage to track blocked tokens // Default: "cache.app"
  *     },
  * }
+ * @psalm-type SncRedisConfig = array{
+ *     class?: array{
+ *         client?: scalar|Param|null, // Default: "Predis\\Client"
+ *         client_options?: scalar|Param|null, // Default: "Predis\\Configuration\\Options"
+ *         connection_parameters?: scalar|Param|null, // Default: "Predis\\Connection\\Parameters"
+ *         connection_factory?: scalar|Param|null, // Default: "Snc\\RedisBundle\\Client\\Predis\\Connection\\ConnectionFactory"
+ *         connection_wrapper?: scalar|Param|null, // Default: "Snc\\RedisBundle\\Client\\Predis\\Connection\\ConnectionWrapper"
+ *         phpredis_client?: scalar|Param|null, // Default: "Redis"
+ *         relay_client?: scalar|Param|null, // Default: "Relay\\Relay"
+ *         phpredis_clusterclient?: scalar|Param|null, // Default: "RedisCluster"
+ *         logger?: scalar|Param|null, // Default: "Snc\\RedisBundle\\Logger\\RedisLogger"
+ *         data_collector?: scalar|Param|null, // Default: "Snc\\RedisBundle\\DataCollector\\RedisDataCollector"
+ *         monolog_handler?: scalar|Param|null, // Default: "Monolog\\Handler\\RedisHandler"
+ *     },
+ *     clients?: array<string, array{ // Default: []
+ *         type?: scalar|Param|null,
+ *         alias?: scalar|Param|null,
+ *         logging?: bool|Param, // Default: true
+ *         dsns?: list<mixed>,
+ *         options?: array{
+ *             commands?: array<string, scalar|Param|null>,
+ *             connection_async?: bool|Param, // Default: false
+ *             connection_persistent?: mixed, // Default: false
+ *             connection_timeout?: scalar|Param|null, // Default: 5
+ *             scan?: int|Param, // Default: null
+ *             read_write_timeout?: scalar|Param|null, // Default: null
+ *             iterable_multibulk?: bool|Param, // Default: false
+ *             throw_errors?: bool|Param, // Default: true
+ *             serialization?: scalar|Param|null, // Default: "default"
+ *             cluster?: scalar|Param|null, // Default: null
+ *             prefix?: scalar|Param|null, // Default: null
+ *             replication?: true|"predis"|"sentinel"|Param,
+ *             service?: scalar|Param|null, // Default: null
+ *             slave_failover?: "none"|"error"|"distribute"|"distribute_slaves"|Param,
+ *             parameters?: array{
+ *                 database?: scalar|Param|null, // Default: null
+ *                 username?: scalar|Param|null, // Default: null
+ *                 password?: scalar|Param|null, // Default: null
+ *                 sentinel_username?: scalar|Param|null, // Default: null
+ *                 sentinel_password?: scalar|Param|null, // Default: null
+ *                 logging?: bool|Param, // Default: true
+ *                 ssl_context?: mixed, // Default: null
+ *             },
+ *         },
+ *     }>,
+ *     monolog?: array{
+ *         client?: scalar|Param|null,
+ *         key?: scalar|Param|null,
+ *         formatter?: scalar|Param|null,
+ *     },
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1305,6 +1356,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     doctrine_migrations?: DoctrineMigrationsConfig,
  *     security?: SecurityConfig,
  *     lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
+ *     snc_redis?: SncRedisConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1315,6 +1367,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         maker?: MakerConfig,
  *         security?: SecurityConfig,
  *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
+ *         snc_redis?: SncRedisConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1325,6 +1378,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         security?: SecurityConfig,
  *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
+ *         snc_redis?: SncRedisConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1335,6 +1389,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         doctrine_migrations?: DoctrineMigrationsConfig,
  *         security?: SecurityConfig,
  *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
+ *         snc_redis?: SncRedisConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,
