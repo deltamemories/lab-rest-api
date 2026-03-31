@@ -13,8 +13,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Entity\User;
 use App\Entity\Post;
+use App\Message\PostCreatedMessage;
 use App\Repository\PostRepository;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -30,7 +32,8 @@ final class PostController extends AbstractController {
         #[MapRequestPayload] CreatePostDto $postDto,
         EntityManagerInterface $emi,
         #[CurrentUser] User $user,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
+        MessageBusInterface $bus
     ): JsonResponse {
         $post = new Post();
 
@@ -45,6 +48,7 @@ final class PostController extends AbstractController {
 
         $emi->persist($post);
         $emi->flush();
+        $bus->dispatch(new PostCreatedMessage($post->getId()));
         $cache->invalidateTags([$this->getUserTag($user)]);
 
         return $this->json(['id' => $post->getId()], Response::HTTP_CREATED);
