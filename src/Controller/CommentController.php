@@ -13,9 +13,11 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Entity\User;
 use App\Entity\Comment;
 use App\Entity\Post;
+use App\Message\CommentCreatedMessage;
 use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -36,7 +38,8 @@ final class CommentController extends AbstractController {
         EntityManagerInterface $emi,
         PostRepository $postRepo,
         #[CurrentUser] User $user,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
+        MessageBusInterface $bus
     ): JsonResponse {
         $post = $postRepo->findOneBy(['id' => $commentDto->post]);
         if ($post === null) {
@@ -51,6 +54,7 @@ final class CommentController extends AbstractController {
 
         $emi->persist($comment);
         $emi->flush();
+        $bus->dispatch(new CommentCreatedMessage($comment->getId()));
         $cache->invalidateTags([
             $this->getUserTag($user),
             $this->getPostTag($comment->getPost())
