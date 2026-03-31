@@ -7,11 +7,18 @@ framework:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
             # failed: 'doctrine://default?queue_name=failed'
-            sync: 'sync://'
+            # sync: 'sync://'
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
+                    delay: 1000
 
         routing:
             # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            'App\Message\PostCreatedMessage': async
+            'App\Message\CommentCreatedMessage' : async
 
 # when@test:
 #    framework:
