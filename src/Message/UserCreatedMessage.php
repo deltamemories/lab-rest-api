@@ -4,7 +4,7 @@ namespace App\Message;
 
 readonly class UserCreatedMessage {
     public function __construct(
-        public int $usertId
+        public int $userId
     )
     {}
 }
