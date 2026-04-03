@@ -3,21 +3,21 @@
 namespace App\MessageHandler;
 
 
-use App\Message\PostCreatedMessage;
+use App\Message\UserCreatedMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class PostCreatedHandler {
+class UserCreatedHandler {
     public function __construct(
         private LoggerInterface $logger
     )
     {}
 
     public function __invoke(
-        PostCreatedMessage $message
+        UserCreatedMessage $message
     )
     {
-        $this->logger->info("Entity User created with id: {$message->postId}");
+        $this->logger->info("Entity User created with id: {$message->userId}");
     }
 }
