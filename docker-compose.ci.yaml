@@ -70,3 +70,6 @@ services:
 networks:
   symfony_network:
     driver: bridge
+
+volumes:
+  db_data:
