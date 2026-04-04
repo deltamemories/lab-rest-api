@@ -19,6 +19,7 @@ framework:
             # Route your messages to the transports
             'App\Message\PostCreatedMessage': async
             'App\Message\CommentCreatedMessage' : async
+            'App\Message\UserCreatedMessage': async
 
 # when@test:
 #    framework:
