@@ -82,6 +82,11 @@
         }
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.66"
+        "dama/doctrine-test-bundle": "^8.6",
+        "phpunit/phpunit": "^13.1",
+        "symfony/browser-kit": "8.0.*",
+        "symfony/css-selector": "8.0.*",
+        "symfony/maker-bundle": "^1.66",
+        "zenstruck/messenger-test": "^1.14"
     }
 }

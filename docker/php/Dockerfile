@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install intl pdo_mysql zip
 
-RUN pecl install redis amqp \
-    && docker-php-ext-enable redis amqp
+RUN pecl install redis amqp pcov \
+    && docker-php-ext-enable redis amqp pcov
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
