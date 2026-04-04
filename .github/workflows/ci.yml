@@ -13,6 +13,10 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Add /var/www/symfony to git safe.directory
+              run: |
+                git config --global --add safe.directory /var/www/symfony
+
             - name: Create .env file
               run: |
                 echo "JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}" >> .env
@@ -26,7 +30,7 @@ jobs:
 
             - name: Install dependencies
               run: |
-                docker compose -f docker-compose.ci.yaml run --rm php composer install --no-interaction --prefer-dist --optimize-autoloader
+                docker compose -f docker-compose.ci.yaml run --rm --user root php composer install --no-interaction --prefer-dist --optimize-autoloader
 
             - name: Generate JWT keys
               env:
