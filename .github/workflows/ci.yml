@@ -20,6 +20,8 @@ jobs:
             - name: Create .env file
               run: |
                 echo "JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}" >> .env
+                echo "JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem" >> .env
+                echo "JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem" >> .env
                 echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
                 echo "DB_USER=${{ secrets.DB_USER }}" >> .env
                 echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
