@@ -24,7 +24,8 @@ jobs:
                 echo "DB_USER=${{ secrets.DB_USER }}" >> .env
                 echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
                 echo "DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
-
+                echo "DEFAULT_URI=http://localhost" >> .env
+                echo "APP_ENV=test" >> .env
             - name: Build
               run: docker compose -f docker-compose.ci.yaml build
 
