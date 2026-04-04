@@ -41,7 +41,7 @@ jobs:
               run: |
                 docker compose -f docker-compose.ci.yaml run --rm --user root php chmod +x bin/console
 
-                docker compose -f docker-compose.ci.yaml run --rm \
+                docker compose -f docker-compose.ci.yaml run --rm --user root \
                 -e JWT_PASSPHRASE=$JWT_PASSPHRASE \
                 php bin/console lexik:jwt:generate-keypair
             
@@ -55,7 +55,7 @@ jobs:
 
                 docker compose -f docker-compose.ci.yaml run --rm php bin/console doctrine:migrations:migrate --no-interaction
                 
-                docker compose -f docker-compose.ci.yaml run --rm \
+                docker compose -f docker-compose.ci.yaml run --rm --user root \
                 -e PHP_PCOV_ENABLED=1 \
                 -e JWT_PASSPHRASE=$JWT_PASSPHRASE \
                 php bin/phpunit --configuration phpunit.dist.xml --coverage-text --coverage-clover=coverage.xml --colors=never
