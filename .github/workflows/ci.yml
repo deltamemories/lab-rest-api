@@ -26,6 +26,8 @@ jobs:
               env:
                 JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
               run: |
+                docker compose -f docker-compose.ci.yaml run --rm php chmod +x bin/console
+
                 docker compose -f docker-compose.ci.yaml run --rm \
                 -e JWT_PASSPHRASE=$JWT_PASSPHRASE \
                 php bin/console lexik:jwt:generate-keypair
