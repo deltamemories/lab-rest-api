@@ -20,8 +20,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use OpenApi\Attributes as OA;
 
 #[Route('/api/comments')]
+#[OA\Tag(name: 'Comments')]
 final class CommentController extends AbstractController {
 
     private function getUserTag(User $user): string {

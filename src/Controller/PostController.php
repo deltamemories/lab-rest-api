@@ -19,8 +19,10 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use OpenApi\Attributes as OA;
 
 #[Route('/api/posts')]
+#[OA\Tag(name: 'Posts')]
 final class PostController extends AbstractController {
 
     private function getUserTag(User $user): string {

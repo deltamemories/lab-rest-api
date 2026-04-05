@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Dto\CreateUserDto;
 use App\Entity\User;
 use App\Message\UserCreatedMessage;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,26 +13,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(name: 'Registration')]
 final class RegistrationController extends AbstractController
 {
     #[Route('/api/register', name: 'app_register', methods: ['POST'])]
+    #[OA\Post(security: [])]
     public function register(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
-        MessageBusInterface $bus
+        MessageBusInterface $bus,
+        #[MapRequestPayload] CreateUserDto $userDto
     ): JsonResponse {
-        $data = json_decode($request->getContent(), true);
-
-        if (!isset($data['email']) || !isset($data['password'])) {
-            return new JsonResponse(
-                ['error' => 'Missing email or password'],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-
-        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $userDto->email]);
         if ($existingUser) {
             return new JsonResponse(
                 ['error' => "User with this email already exists"],
@@ -41,11 +38,11 @@ final class RegistrationController extends AbstractController
 
         $user = new User();
 
-        $user->setEmail($data['email']);
+        $user->setEmail($userDto->email);
 
         $hashedPassword = $passwordHasher->hashPassword(
             $user,
-            $data['password']
+            $userDto->password
         );
 
         $user->setPassword($hashedPassword);
