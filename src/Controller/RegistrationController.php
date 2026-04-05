@@ -20,6 +20,7 @@ use OpenApi\Attributes as OA;
 final class RegistrationController extends AbstractController
 {
     #[Route('/api/register', name: 'app_register', methods: ['POST'])]
+    #[OA\Post(security: [])]
     public function register(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,

@@ -17,6 +17,7 @@ nelmio_api_doc:
                     tags:
                         - Login
                     summary: Login and getting JWT token
+                    security: []
                     requestBody:
                         description: Credentinals
                         required: true
