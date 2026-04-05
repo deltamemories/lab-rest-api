@@ -48,10 +48,14 @@ jobs:
             - name: Run tests with coverage
               env:
                 JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
+                DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+                DB_NAME: ${{ secrets.DB_NAME }}
               run: |
                 docker compose -f docker-compose.ci.yaml up -d
                 
                 sleep 10
+
+                docker compose -f docker-compose.ci.yaml exec -T mysql mysql -uroot -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}_test;"
 
                 docker compose -f docker-compose.ci.yaml run --rm php bin/console doctrine:migrations:migrate --no-interaction
                 
