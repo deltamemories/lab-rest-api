@@ -69,7 +69,7 @@ class RegistrationControllerTest extends WebTestCase {
             '/api/register',
             [],
             [],
-            ['CONTENT_TYPE', 'application/json'],
+            ['CONTENT_TYPE' => 'application/json'],
             json_encode(['email' => $email, 'password' => 'password222'])
         );
 
