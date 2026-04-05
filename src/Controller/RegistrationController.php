@@ -14,7 +14,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(name: 'Registration')]
 final class RegistrationController extends AbstractController
 {
     #[Route('/api/register', name: 'app_register', methods: ['POST'])]
