@@ -1,0 +1,74 @@
+name: CI
+
+on:
+    push:
+        branches:
+          - feat/*
+    pull_request:
+        branches: [ main ]
+
+jobs:
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Add /var/www/symfony to git safe.directory
+              run: |
+                git config --global --add safe.directory /var/www/symfony
+
+            - name: Create .env file
+              run: |
+                echo "JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}" >> .env
+                echo "JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem" >> .env
+                echo "JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem" >> .env
+                echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+                echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+                echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+                echo "DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
+                echo "DEFAULT_URI=http://localhost" >> .env
+                echo "APP_ENV=test" >> .env
+            - name: Build
+              run: docker compose -f docker-compose.ci.yaml build
+
+            - name: Install dependencies
+              run: |
+                docker compose -f docker-compose.ci.yaml run --rm --user root php composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            - name: Generate JWT keys
+              env:
+                JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
+              run: |
+                docker compose -f docker-compose.ci.yaml run --rm --user root php chmod +x bin/console
+
+                docker compose -f docker-compose.ci.yaml run --rm --user root \
+                -e JWT_PASSPHRASE=$JWT_PASSPHRASE \
+                php bin/console lexik:jwt:generate-keypair
+            
+            - name: Run tests with coverage
+              env:
+                JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
+                DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+                DB_NAME: ${{ secrets.DB_NAME }}
+              run: |
+                docker compose -f docker-compose.ci.yaml up -d
+                
+                sleep 10
+
+                docker compose -f docker-compose.ci.yaml exec -T mysql mysql -uroot -p"$DB_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME}_test;"
+
+                docker compose -f docker-compose.ci.yaml run --rm --user root php chmod -R 777 .
+
+                docker compose -f docker-compose.ci.yaml run --rm php bin/console doctrine:migrations:migrate --no-interaction
+                
+                docker compose -f docker-compose.ci.yaml run --rm --user root \
+                -e PHP_PCOV_ENABLED=1 \
+                -e JWT_PASSPHRASE=$JWT_PASSPHRASE \
+                php bin/phpunit --configuration phpunit.dist.xml --coverage-text --coverage-cobertura=coverage.xml --colors=never
+            
+            - name: Check coverage threshold
+              uses: irongut/CodeCoverageSummary@v1.3.0
+              with:
+                filename: coverage.xml
+                fail_below_min: true
+                thresholds: '60 80'
