@@ -1,9 +1,4 @@
-Draft:
-- how to build and run project OK
-- how to make migrations OK
-- how to run tests OK
-- requests to API examples
-
+# Blog REST API lab  
 
 ## Installation
 1. Create .env  
